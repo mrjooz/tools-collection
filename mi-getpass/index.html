@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>小米路由器密码计算</title>
+  <link rel="shortcut icon" href="favicon.ico" />
+  <link type="text/css" rel="stylesheet" href="css/bootstrap.min.css" media="screen,projection" />
+  <link type="text/css" rel="stylesheet" href="css/style.min.css" media="screen,projection" />
+</head>
+
+<body>
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="input-field col-12 col-sm-12 col-md-8 col-lg-6">
+        <div class="alert alert-warning" role="alert">
+          说明
+          <ol>
+            <li>密码计算全部在本地进行</li>
+            <li>计算公式：md5(sn+salt).slice(0,8)</li>
+          </ol>
+        </div>
+        <form>
+          <!--SN-->
+          <div class="input-group mb-2 mr-sm-2">
+            <div class="input-group-prepend">
+              <span class="input-group-text">🏷️</span>
+              <div class="input-group-text">SN码</div>
+            </div>
+            <input type="text" class="form-control" id="sn" placeholder="输入SN码" value=""/>
+          </div>
+
+          <!-- 复制密码 -->
+          <div class="form-group">
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" id="code" placeholder="密码计算中" value="" readonly />
+              <div class="input-group-append">
+                <button class="btn btn-secondary" type="button" id="btn_copy" data-clipboard-target="#code">
+                  复制Copy
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="row justify-content-center">
+              <button class="btn btn-primary" type="button" id="btn_gencode">
+                计算密码
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript" src="js/clipboard.min.js"></script>
+  <script type="text/javascript" src="js/md5.min.js"></script>
+  <script type="text/javascript">
+    var clipboard = new ClipboardJS("#btn_copy");
+    document.getElementById("btn_gencode").onclick = function () {
+      // 输入校验
+      var inputSn = document.getElementById("sn");
+      if(inputSn.value.length == 0){
+        inputSn.setAttribute("placeholder", "必须输入SN码");
+        inputSn.className += " Red";
+        return 1
+      }
+
+      // 选择salt
+      var salt =  inputSn.value.indexOf("/") != -1 ? "6D2DF50A-250F-4A30-A5E6-D44FB0960AA0".toLowerCase(): "A2E371B0-B34B-48A5-8C40-A7133F3B5D88";
+      // 拼接sn和salt
+      var orginValue=inputSn.value+salt;
+      // 计算密码
+      var code = md5(orginValue);
+      if (code) {
+        document.getElementById("code").value = code.slice(0,8);
+      }
+
+    }
+  </script>
+</body>
+
+</html>
